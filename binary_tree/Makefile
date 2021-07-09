@@ -1,8 +1,8 @@
 
-APPS := binary_tree
+APPS := bst 
 OBJDIR := build
 
-binary_tree_SRCS := binary_tree.c
+bst_SRCS := bst.c
 
 ifndef OBJDIR
  $(error "OBJDIR is not defined. Aborting")
