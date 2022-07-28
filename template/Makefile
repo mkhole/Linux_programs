@@ -1,9 +1,11 @@
-
 APPS := template helloworld
 OBJDIR := build
 
 template_SRCS := template.c
 helloworld_SRCS := helloworld.c
+
+CFLAGS  += -Wall
+LDFLAGS +=
 
 ifndef OBJDIR
  $(error "OBJDIR is not defined. Aborting")
@@ -13,29 +15,26 @@ ifndef APPS
  $(error "APPS is not defined. Aborting")
 endif
 
-define EXPAND_VAR 
- $(1)_OBJS :=  $$(patsubst %.c,$(OBJDIR)/%.o,$$($(1)_SRCS))
- OBJS += $$($(1)_OBJS)
- EXES += $$(patsubst %,$(OBJDIR)/%,$(1))
-endef
+define EXPAND_APP
+$(1)_OBJS := $$(patsubst %.c,$(OBJDIR)/%.o,$$($(1)_SRCS))
 
-$(foreach app,$(APPS),$(eval $(call EXPAND_VAR,$(app))))
+$(OBJDIR)/$(1): $$($(1)_OBJS)
+	$(CC) $$^ $(LDFLAGS) -o $$@
+
+$(1): $(OBJDIR)/$(1);
+endef
 
 .PHONY : all clean
 
-CFLAGS  += 
-LDFLAGS +=
-
-all: $(OBJDIR) $(EXES)
-	@echo "Finish!"
-
--include $(OBJDIR)/*.d
+all: $(OBJDIR) $(APPS)
+	@echo "Done"
 
 $(OBJDIR):
 	mkdir -p $@
 
-$(EXES): $(OBJS)
-	$(CC) $($(@F)_OBJS) $(LDFLAGS) -o $@
+$(foreach app,$(APPS),$(eval $(call EXPAND_APP,$(app))))
+
+-include $(OBJDIR)/*.d
 
 $(OBJDIR)/%.o: %.c
 	$(CC) -c $(CFLAGS) -MMD -MT$(@) $< -o $@
