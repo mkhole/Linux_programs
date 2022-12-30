@@ -1,7 +1,8 @@
-APPS := conntrack
+APPS := conntrack_mark conntrack_nat
 OBJDIR := build
 
-conntrack_SRCS := conntrack.c
+conntrack_mark_SRCS := conntrack_mark.c
+conntrack_nat_SRCS := conntrack_nat.c
 
 CFLAGS  += -Wall
 LDFLAGS += -lnetfilter_conntrack
